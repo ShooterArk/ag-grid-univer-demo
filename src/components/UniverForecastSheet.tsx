@@ -5,7 +5,7 @@ import {
   LocaleType,
   merge,
 } from '@univerjs/presets';
-import { ISheetValueChangedEvent, UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
+import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 import EnUS from '@univerjs/preset-sheets-core/locales/en-US';
 
 import '@univerjs/design/lib/index.css';

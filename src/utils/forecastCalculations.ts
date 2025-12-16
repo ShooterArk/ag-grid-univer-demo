@@ -28,8 +28,8 @@ export function createNewRow(): ForecastRow {
 
   return {
     id,
-    lineItem: '',
-    forecastType: 'Commitment based',
+    sheet_name: '',
+    forecast_type: 'Commitment based',
     month: 'Jan 2026',
     budget,
     actuals,

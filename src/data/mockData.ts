@@ -3,8 +3,8 @@ import { calculateETC, calculateEAC } from '../utils/forecastCalculations';
 
 function createRow(
   id: string,
-  lineItem: string,
-  forecastType: 'Commitment based' | 'Time based',
+  sheet_name: string,
+  forecast_type: 'Commitment based' | 'Time based',
   month: 'Jan 2026' | 'Feb 2026' | 'Mar 2026' | 'Apr 2026' | 'May 2026' | 'Jun 2026',
   budget: number,
   actuals: number
@@ -13,8 +13,8 @@ function createRow(
   const eac = calculateEAC(actuals, etc);
   return {
     id,
-    lineItem,
-    forecastType,
+    sheet_name,
+    forecast_type,
     month,
     budget,
     actuals,

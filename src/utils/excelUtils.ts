@@ -28,8 +28,8 @@ export async function importFromExcel(file: File): Promise<ForecastRow[]> {
     // Skip header row (first row)
     if (rowNumber === 1) return;
 
-    const lineItem = String(row.getCell(1).value ?? '').trim();
-    const forecastType = parseForecastType(String(row.getCell(2).value ?? ''));
+    const sheet_name = String(row.getCell(1).value ?? '').trim();
+    const forecast_type = parseForecastType(String(row.getCell(2).value ?? ''));
     const month = parseMonth(String(row.getCell(3).value ?? ''));
     const budget = parseNumber(row.getCell(4).value);
     const actuals = parseNumber(row.getCell(5).value);
@@ -38,8 +38,8 @@ export async function importFromExcel(file: File): Promise<ForecastRow[]> {
 
     rows.push({
       id: `import-${Date.now()}-${rowIndex++}`,
-      lineItem,
-      forecastType,
+      sheet_name,
+      forecast_type,
       month,
       budget,
       actuals,
@@ -88,8 +88,8 @@ export async function exportToExcel(data: ForecastRow[], filename: string = 'for
   // Add data rows
   data.forEach((row) => {
     worksheet.addRow({
-      lineItem: row.lineItem,
-      forecastType: row.forecastType,
+      sheet_name: row.sheet_name,
+      forecast_type: row.forecast_type,
       month: row.month,
       budget: row.budget,
       actuals: row.actuals,
