@@ -1,0 +1,203 @@
+import { useEffect, useRef } from 'react';
+import {
+  createUniver,
+  defaultTheme,
+  LocaleType,
+  merge,
+} from '@univerjs/presets';
+import { ISheetValueChangedEvent, UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
+import EnUS from '@univerjs/preset-sheets-core/locales/en-US';
+
+import '@univerjs/design/lib/index.css';
+import '@univerjs/ui/lib/index.css';
+import '@univerjs/docs-ui/lib/index.css';
+import '@univerjs/sheets-ui/lib/index.css';
+import '@univerjs/sheets-formula-ui/lib/index.css';
+import '@univerjs/presets/lib/styles/preset-sheets-core.css';
+
+import '@univerjs/sheets/facade';
+import { FUniver } from '@univerjs/core/facade';
+import { supabase } from '../utils/supabaseClient';
+import { ForecastRow } from '../types/forecast';
+
+interface Props {
+  row: ForecastRow;
+}
+
+export function UniverForecastSheet({ row }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const { univerAPI, univer } = createUniver({
+      locale: LocaleType.EN_US,
+      locales: { enUS: merge({}, EnUS) },
+      theme: defaultTheme,
+      presets: [UniverSheetsCorePreset({ container: containerRef.current })],
+    });
+
+    // -----------------------------
+    // CREATE WORKBOOK
+    // -----------------------------
+
+    univerAPI.createWorkbook({
+      id: 'forecast-detail',
+      name: 'Forecast Detail',
+      sheets: {
+        sheet1: {
+          id: 'sheet1',
+          name: 'Forecast Detail',
+          rowCount: 100,
+          columnCount: 26,
+          showGridlines: 1,
+          freeze: { startRow: 0, startColumn: 0, xSplit: 0, ySplit: 1 },
+          cellData: {
+            0: {
+              0: { v: 'Line Item', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+              1: { v: 'Forecast Type', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+              2: { v: 'Month', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+              3: { v: 'Budget', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+              4: { v: 'Actuals', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+              5: { v: 'ETC', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+              6: { v: 'EAC', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+            },
+            1: {
+              0: { v: row.sheet_name },
+              1: { v: row.forecast_type },
+              2: { v: row.month },
+              3: { v: row.budget },
+              4: { v: row.actuals },
+              5: { v: row.etc },
+              6: { v: row.eac },
+            },
+          },
+        },
+      },
+      sheetOrder: ['sheet1'],
+    });
+
+    const api = FUniver.newAPI(univer);
+    const workbook = api.getActiveWorkbook();
+    const sheet = workbook?.getActiveSheet();
+
+    // -----------------------------
+    // HANDLE VALUE CHANGES
+    // -----------------------------
+
+    const disposable = api.addEvent(api.Event.SheetValueChanged, async (params) => {
+      if (!sheet) return;
+    
+      const { payload } = params as any;
+
+      console.log('payload', payload);
+
+      const subUnitId = payload?.params?.subUnitId || undefined;
+
+      console.log('subUnitId', subUnitId);
+    
+      // Only handle our active sheet
+      if (subUnitId !== sheet.getSheetId()) return;
+    
+      const cellValue = payload?.params?.cellValue as
+        | Record<number, Record<number, { v: unknown }>>
+        | undefined;
+    
+      if (!cellValue) return;
+    
+      const updated: Partial<ForecastRow> = {};
+    
+      // cellValue = { [rowIndex]: { [colIndex]: { v, ... } } }
+      for (const [rowKey, colMap] of Object.entries(cellValue)) {
+        const rowIndex = Number(rowKey);
+    
+        // Only track data row (row 2 -> index 1)
+        if (rowIndex !== 1) continue;
+    
+        for (const [colKey, cell] of Object.entries(colMap as Record<string, { v: unknown }>)) {
+          const colIndex = Number(colKey);
+          const value = cell?.v;
+    
+          switch (colIndex) {
+            case 0:
+              updated.sheet_name = String(value ?? '');
+              break;
+            case 1:
+              updated.forecast_type = String(value ?? '') as ForecastRow['forecast_type'];
+              break;
+            case 2:
+              updated.month = String(value ?? '');
+              break;
+            case 3:
+              updated.budget = Number(value ?? 0);
+              break;
+            case 4:
+              updated.actuals = Number(value ?? 0);
+              break;
+            case 5:
+              updated.etc = Number(value ?? 0);
+              break;
+            case 6:
+              updated.eac = Number(value ?? 0);
+              break;
+            default:
+              // ignore other columns for now
+              break;
+          }
+        }
+      }
+    
+      if (Object.keys(updated).length === 0) return;
+    
+      // Merge with original row
+      const merged: ForecastRow = { ...row, ...updated };
+    
+      // If budget or actuals changed, recompute ETC/EAC
+      if (updated.budget !== undefined || updated.actuals !== undefined) {
+        merged.etc = merged.budget - merged.actuals;
+        merged.eac = merged.actuals + merged.etc;
+    
+        // Push recomputed values back into sheet
+        sheet.getRange(1, 5).setValue(merged.etc); // F2
+        sheet.getRange(1, 6).setValue(merged.eac); // G2
+      }
+    
+      // Persist to Supabase
+      const { error } = await supabase
+        .from('project_sheets')
+        .update({
+          sheet_name: merged.sheet_name,
+          forecast_type: merged.forecast_type,
+          month: merged.month,
+          budget: merged.budget,
+          actuals: merged.actuals,
+          etc: merged.etc,
+          eac: merged.eac,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', merged.id);
+    
+      if (error) {
+        console.error('Supabase update error:', error);
+      }
+    });
+
+    return () => {
+      disposable.dispose();
+      univer.dispose();
+    };
+  }, [row.id]);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: '600px',
+        background: '#ffffff',
+        borderRadius: '12px',
+        overflow: 'hidden',
+      }}
+    />
+  );
+}

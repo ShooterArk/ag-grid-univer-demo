@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom AG Grid theme overrides for a cleaner look */
+.ag-theme-alpine {
+  --ag-font-family: 'DM Sans', system-ui, sans-serif;
+  --ag-font-size: 14px;
+  --ag-header-background-color: #f8fafc;
+  --ag-header-foreground-color: #1e293b;
+  --ag-header-cell-hover-background-color: #f1f5f9;
+  --ag-row-hover-color: #f8fafc;
+  --ag-selected-row-background-color: #e0f2fe;
+  --ag-range-selection-border-color: #3b82f6;
+  --ag-input-focus-border-color: #3b82f6;
+  --ag-cell-horizontal-padding: 16px;
+}
+
+.ag-theme-alpine .ag-header-cell {
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  color: #64748b;
+}
+
+.ag-theme-alpine .ag-cell {
+  display: flex;
+  align-items: center;
+}
+
+.ag-theme-alpine .ag-row {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ag-theme-alpine .ag-row:last-child {
+  border-bottom: none;
+}
+
+.ag-theme-alpine .ag-header {
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Smooth transitions */
+.ag-theme-alpine .ag-row-animation-row {
+  transition: transform 0.2s ease;
+}
+
+/* Number columns alignment */
+.ag-theme-alpine .ag-right-aligned-cell {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+
+/* Custom scrollbar styling */
+.ag-theme-alpine ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ag-theme-alpine ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.ag-theme-alpine ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.ag-theme-alpine ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Univer Workbook Container Styling */
+.univer-workbook-container {
+  position: relative;
+}
+
+/* Ensure Univer fills the container */
+.univer-workbook-container > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Custom scrollbar for Univer */
+.univer-workbook-container ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.univer-workbook-container ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.univer-workbook-container ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+}
+
+.univer-workbook-container ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide Univer toolbar/header if desired */
+.univer-workbook-container .univer-toolbar {
+  display: none;
+}
+
+#univer {
+  height: 100%;
+  overflow: hidden;
+}
