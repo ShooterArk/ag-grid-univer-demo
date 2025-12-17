@@ -41,6 +41,41 @@ export function UniverForecastSheet({ row }: Props) {
     // CREATE WORKBOOK
     // -----------------------------
 
+    // Define headers and data for dynamic column sizing
+    const headers = [
+      { v: 'Sheet Name', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+      { v: 'Forecast Type', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+      { v: 'Month', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+      { v: 'Budget', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+      { v: 'Actuals', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+      { v: 'ETC', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+      { v: 'EAC', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+    ];
+
+    const dataValues: Array<{ v: string | number | null }> = [
+      { v: row.sheet_name },
+      { v: row.forecast_type },
+      { v: row.month },
+      { v: row.budget },
+      { v: row.actuals },
+      { v: row.etc },
+      { v: row.eac },
+    ];
+
+    // Build cellData dynamically
+    const headerRow: Record<number, { v: string; s?: object }> = {};
+    const dataRow: Record<number, { v: string | number | null }> = {};
+
+    headers.forEach((header, index) => {
+      headerRow[index] = header;
+    });
+
+    dataValues.forEach((cell, index) => {
+      dataRow[index] = cell;
+    });
+
+    const columnCount = headers.length;
+
     univerAPI.createWorkbook({
       id: 'forecast-detail',
       name: 'Forecast Detail',
@@ -49,28 +84,12 @@ export function UniverForecastSheet({ row }: Props) {
           id: 'sheet1',
           name: 'Forecast Detail',
           rowCount: 100,
-          columnCount: 26,
+          columnCount,
           showGridlines: 1,
           freeze: { startRow: 0, startColumn: 0, xSplit: 0, ySplit: 1 },
           cellData: {
-            0: {
-              0: { v: 'Line Item', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-              1: { v: 'Forecast Type', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-              2: { v: 'Month', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-              3: { v: 'Budget', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-              4: { v: 'Actuals', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-              5: { v: 'ETC', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-              6: { v: 'EAC', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
-            },
-            1: {
-              0: { v: row.sheet_name },
-              1: { v: row.forecast_type },
-              2: { v: row.month },
-              3: { v: row.budget },
-              4: { v: row.actuals },
-              5: { v: row.etc },
-              6: { v: row.eac },
-            },
+            0: headerRow,
+            1: dataRow,
           },
         },
       },
@@ -80,6 +99,8 @@ export function UniverForecastSheet({ row }: Props) {
     const api = FUniver.newAPI(univer);
     const workbook = api.getActiveWorkbook();
     const sheet = workbook?.getActiveSheet();
+
+    sheet?.hideColumns(columnCount - 1);
 
     // -----------------------------
     // HANDLE VALUE CHANGES

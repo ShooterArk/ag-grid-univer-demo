@@ -26,6 +26,10 @@ interface UniverForecastSheetProps {
 }
 
 function createWorkbookData(row: ForecastRow): IWorkbookData {
+
+
+    const columnCount = Object.keys(row).length - 2;
+
     return {
         id: 'forecast-workbook',
         name: 'Forecast Workbook',
@@ -40,7 +44,7 @@ function createWorkbookData(row: ForecastRow): IWorkbookData {
                 tabColor: '',
                 hidden: BooleanNumber.FALSE,
                 rowCount: 100,
-                columnCount: 26,
+                columnCount,
                 zoomRatio: 1,
                 showGridlines: BooleanNumber.TRUE,
                 defaultColumnWidth: 100,
@@ -54,7 +58,7 @@ function createWorkbookData(row: ForecastRow): IWorkbookData {
                 cellData: {
                     // Row 1: Headers
                     0: {
-                        0: { v: 'Line Item', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
+                        0: { v: 'Sheet Name', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
                         1: { v: 'Forecast Type', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
                         2: { v: 'Month', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },
                         3: { v: 'Budget', s: { bl: 1, bg: { rgb: '#f1f5f9' } } },

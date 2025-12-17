@@ -64,7 +64,7 @@ export async function exportToExcel(data: ForecastRow[], filename: string = 'for
 
   // Define columns
   worksheet.columns = [
-    { header: 'Line Item', key: 'lineItem', width: 25 },
+    { header: 'Sheet Name', key: 'lineItem', width: 25 },
     { header: 'Forecast Type', key: 'forecastType', width: 18 },
     { header: 'Month', key: 'month', width: 12 },
     { header: 'Budget', key: 'budget', width: 15 },
