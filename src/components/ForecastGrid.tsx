@@ -84,6 +84,7 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
       type: 'numericColumn',
       valueFormatter: numberFormatter,
       cellEditor: 'agNumberCellEditor',
+      filter: 'agNumberColumnFilter',
       flex: 1,
       minWidth: 110,
     },
@@ -94,6 +95,7 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
       type: 'numericColumn',
       valueFormatter: numberFormatter,
       cellEditor: 'agNumberCellEditor',
+      filter: 'agNumberColumnFilter',
       flex: 1,
       minWidth: 110,
     },
@@ -104,6 +106,7 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
       type: 'numericColumn',
       valueFormatter: numberFormatter,
       cellEditor: 'agNumberCellEditor',
+      filter: 'agNumberColumnFilter',
       flex: 1,
       minWidth: 110,
       cellStyle: (params) => {
@@ -120,6 +123,7 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
       editable: false,
       type: 'numericColumn',
       valueFormatter: numberFormatter,
+      filter: 'agNumberColumnFilter',
       flex: 1,
       minWidth: 110,
       cellStyle: { backgroundColor: 'rgba(59, 130, 246, 0.08)' },
@@ -141,6 +145,8 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
   const defaultColDef = useMemo<ColDef>(() => ({
     sortable: true,
     resizable: true,
+    filter: true,
+    // floatingFilter: true,
   }), []);
 
   const onCellValueChanged = useCallback(
