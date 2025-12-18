@@ -30,7 +30,7 @@ interface UniverForecastSheetProps {
 
 export function UniverForecastSheet({ row }: UniverForecastSheetProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const univerRef = useRef<Univer | null>(null);
+    // const univerRef = useRef<Univer | null>(null);
 
     useEffect(() => {
         if (!containerRef.current) return;

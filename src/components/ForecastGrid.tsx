@@ -4,15 +4,16 @@ import { AgGridReact } from 'ag-grid-react';
 import {
   ColDef,
   ValueFormatterParams,
-  CellValueChangedEvent,
+  // CellValueChangedEvent,
   GridReadyEvent,
   ICellRendererParams,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { ForecastRow, FORECAST_TYPES, MONTHS } from '../types/forecast';
-import { calculateETC, calculateEAC, formatCurrency } from '../utils/forecastCalculations';
-import { supabase } from '../utils/supabaseClient';
+// import { calculateETC, calculateEAC, formatCurrency } from '../utils/forecastCalculations';
+import { formatCurrency } from '../utils/forecastCalculations';
+// import { supabase } from '../utils/supabaseClient';
 
 interface ForecastGridProps {
   rowData: ForecastRow[];
