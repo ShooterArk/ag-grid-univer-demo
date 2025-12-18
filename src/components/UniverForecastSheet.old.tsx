@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Univer, IWorkbookData, BooleanNumber } from '@univerjs/core';
+import { Univer } from '@univerjs/core';
 import { ForecastRow } from '../types/forecast';
 
 import {
@@ -9,7 +9,7 @@ import {
     merge,
 } from '@univerjs/presets';
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
-import UniverPresetSheetsCoreEnUS from '@univerjs/preset-sheets-core/locales/en-US';
+// import UniverPresetSheetsCoreEnUS from '@univerjs/preset-sheets-core/locales/en-US';
 import EnUS from '@univerjs/preset-sheets-core/locales/en-US';
 import { FUniver } from '@univerjs/core/facade';
 import { supabase } from '../utils/supabaseClient';

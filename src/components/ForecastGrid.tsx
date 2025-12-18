@@ -184,73 +184,73 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
     return [total];
   }, [rowData]);
 
-  const onCellValueChanged = useCallback(
-    (event: CellValueChangedEvent<ForecastRow>) => {
+  // const onCellValueChanged = useCallback(
+  //   (event: CellValueChangedEvent<ForecastRow>) => {
 
-      console.log('onCellValueChanged', event);
+  //     console.log('onCellValueChanged', event);
 
-      const { data, colDef } = event;
-      if (!data) return;
+  //     const { data, colDef } = event;
+  //     if (!data) return;
 
-      const field = colDef.field as keyof ForecastRow;
+  //     const field = colDef.field as keyof ForecastRow;
 
-      console.log('field', field);
+  //     console.log('field', field);
 
-      const updatedData = rowData.map((row) => {
-        if (row.id !== data.id) return row;
+  //     const updatedData = rowData.map((row) => {
+  //       if (row.id !== data.id) return row;
 
-        let updatedRow: ForecastRow = { ...row, ...data };
+  //       let updatedRow: ForecastRow = { ...row, ...data };
 
-        // Handle ETC manual override
-        if (field === 'etc') {
-          updatedRow.etcOverride = true;
-          updatedRow.eac = calculateEAC(updatedRow.actuals, updatedRow.etc);
-        }
-        // Handle Budget or Actuals change
-        else if (field === 'budget' || field === 'actuals') {
-          if (!updatedRow.etcOverride) {
-            updatedRow.etc = calculateETC(updatedRow.budget, updatedRow.actuals);
-          }
-          updatedRow.eac = calculateEAC(updatedRow.actuals, updatedRow.etc);
-        }
+  //       // Handle ETC manual override
+  //       if (field === 'etc') {
+  //         updatedRow.etcOverride = true;
+  //         updatedRow.eac = calculateEAC(updatedRow.actuals, updatedRow.etc);
+  //       }
+  //       // Handle Budget or Actuals change
+  //       else if (field === 'budget' || field === 'actuals') {
+  //         if (!updatedRow.etcOverride) {
+  //           updatedRow.etc = calculateETC(updatedRow.budget, updatedRow.actuals);
+  //         }
+  //         updatedRow.eac = calculateEAC(updatedRow.actuals, updatedRow.etc);
+  //       }
 
-        return updatedRow;
-      });
+  //       return updatedRow;
+  //     });
 
-      console.log('After updatedRow');
+  //     console.log('After updatedRow');
 
-      onRowDataChange(updatedData);
+  //     onRowDataChange(updatedData);
 
-      // Persist to Supabase (fire and forget)
-      (async () => {
-        const updatedRow = updatedData.find((r) => r.id === data.id);
+  //     // Persist to Supabase (fire and forget)
+  //     (async () => {
+  //       const updatedRow = updatedData.find((r) => r.id === data.id);
 
-        console.log('updatedRow', updatedRow);
+  //       console.log('updatedRow', updatedRow);
         
-        if (!updatedRow) return;
+  //       if (!updatedRow) return;
 
-        const { error } = await supabase
-          .from('project_sheets')
-          .update({
-            sheet_name: updatedRow.sheet_name,
-            forecast_type: updatedRow.forecast_type,
-            month: updatedRow.month,
-            budget: updatedRow.budget,
-            actuals: updatedRow.actuals,
-            etc: updatedRow.etc,
-            eac: updatedRow.eac,
-            // etcOverride: updatedRow.etcOverride,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', updatedRow.id);
+  //       const { error } = await supabase
+  //         .from('project_sheets')
+  //         .update({
+  //           sheet_name: updatedRow.sheet_name,
+  //           forecast_type: updatedRow.forecast_type,
+  //           month: updatedRow.month,
+  //           budget: updatedRow.budget,
+  //           actuals: updatedRow.actuals,
+  //           etc: updatedRow.etc,
+  //           eac: updatedRow.eac,
+  //           // etcOverride: updatedRow.etcOverride,
+  //           updated_at: new Date().toISOString(),
+  //         })
+  //         .eq('id', updatedRow.id);
 
-        if (error) {
-          console.error('Supabase update error:', error);
-        }
-      })();
-    },
-    [rowData, onRowDataChange]
-  );
+  //       if (error) {
+  //         console.error('Supabase update error:', error);
+  //       }
+  //     })();
+  //   },
+  //   [rowData, onRowDataChange]
+  // );
 
   const onGridReady = useCallback((_event: GridReadyEvent) => {
     // no-op for now
