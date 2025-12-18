@@ -138,7 +138,15 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
       width: 100,
       minWidth: 100,
       maxWidth: 100,
-      cellRenderer: ViewButtonRenderer,
+    
+      // Only show View button on normal rows
+      cellRendererSelector: (params) => {
+        // Detect pinned bottom row
+        if (params.node.rowPinned === 'bottom') {
+          return { component: null }; // no renderer
+        }
+        return { component: ViewButtonRenderer };
+      },
     },
   ], [numberFormatter]);
 
@@ -148,6 +156,33 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
     filter: true,
     // floatingFilter: true,
   }), []);
+
+  const pinnedBottomRowData = useMemo(() => {
+    if (!rowData || rowData.length === 0) return [];
+  
+    const total = rowData.reduce(
+      (acc, row) => {
+        acc.budget += row.budget || 0;
+        acc.actuals += row.actuals || 0;
+        acc.etc += row.etc || 0;
+        acc.eac += row.eac || 0;
+        return acc;
+      },
+      {
+        id: '',
+        sheetName: '',
+        forecastType: '',
+        month: '',
+        budget: 0,
+        actuals: 0,
+        etc: 0,
+        eac: 0,
+        etcOverride: false,
+      }
+    );
+  
+    return [total];
+  }, [rowData]);
 
   const onCellValueChanged = useCallback(
     (event: CellValueChangedEvent<ForecastRow>) => {
@@ -165,8 +200,6 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
         if (row.id !== data.id) return row;
 
         let updatedRow: ForecastRow = { ...row, ...data };
-
-        console.log('updatedRow', updatedRow);
 
         // Handle ETC manual override
         if (field === 'etc') {
@@ -230,12 +263,13 @@ export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
-        onCellValueChanged={onCellValueChanged}
+        // onCellValueChanged={onCellValueChanged}
         onGridReady={onGridReady}
         animateRows={true}
         getRowId={(params) => params.data.id}
         suppressRowClickSelection={true}
         stopEditingWhenCellsLoseFocus={true}
+        pinnedBottomRowData={pinnedBottomRowData}
       />
     </div>
   );

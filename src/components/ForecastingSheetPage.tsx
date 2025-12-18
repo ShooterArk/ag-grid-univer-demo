@@ -35,6 +35,11 @@ export function ForecastingSheetPage() {
   }, [loadRowsFromSupabase]);
 
   const addRow = useCallback(async () => {
+
+
+    alert('This feature is not available yet');
+    return;
+
     const newRow: ForecastRow = {
       id: crypto.randomUUID(),
       sheet_name: 'New Sheet',

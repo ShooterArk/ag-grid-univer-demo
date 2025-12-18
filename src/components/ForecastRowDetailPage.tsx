@@ -37,6 +37,7 @@ export function ForecastRowDetailPage() {
         etc: data.etc,
         eac: data.eac,
         etcOverride: data.etc_override ?? false,
+        sheet_json: data.sheet_json,
       };
 
       setRow(rowData);

@@ -12,6 +12,7 @@ export interface ForecastRow {
   etc: number;        // Estimate to Complete (Budget - Actuals, but can be overridden)
   etcOverride: boolean; // Flag to track if ETC was manually edited
   eac: number;        // Estimate at Completion (Actuals + ETC)
+  sheet_json?: any
 }
 
 export const FORECAST_TYPES: ForecastType[] = ['Commitment based', 'Time based'];
