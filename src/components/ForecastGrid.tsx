@@ -17,7 +17,7 @@ import { formatCurrency } from '../utils/forecastCalculations';
 
 interface ForecastGridProps {
   rowData: ForecastRow[];
-  onRowDataChange: (data: ForecastRow[]) => void;
+  onRowDataChange?: (data: ForecastRow[]) => void;
 }
 
 // Cell renderer for the Actions column
@@ -40,7 +40,7 @@ function ViewButtonRenderer(props: ICellRendererParams<ForecastRow>) {
   );
 }
 
-export function ForecastGrid({ rowData, onRowDataChange }: ForecastGridProps) {
+export function ForecastGrid({ rowData }: ForecastGridProps) {
   const gridRef = useRef<AgGridReact<ForecastRow>>(null);
 
   const numberFormatter = useCallback((params: ValueFormatterParams) => {
